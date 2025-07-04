@@ -7,8 +7,8 @@ from datetime import datetime, timedelta
 import os
 from functools import wraps
 
-app = Flask(__name__)
-app.secret_key = 'your-secret-key-change-in-production'
+app = Flask(_name_)
+app.secret_key = '345ea6c682aa6e5c88f8155642a2f3c34352c7e83385a58351bb883094e60708'
 
 # AWS Configuration
 AWS_REGION = 'us-east-1'
@@ -64,13 +64,15 @@ def doctor_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:600627329180:Medtrack:0a7476da-fabf-4386-9015-a799408abd7f'  # <-- Replace with your real ARN
+
 def send_sms_notification(phone_number, message):
-    """Send SMS notification using AWS SNS"""
     try:
         if sns:
             response = sns.publish(
-                PhoneNumber=phone_number,
-                Message=message
+                TopicArn=SNS_TOPIC_ARN,
+                Message=message,
+                Subject="Appointment Notification"
             )
             return response
     except Exception as e:
@@ -401,5 +403,5 @@ def logout():
     flash('Logged out successfully', 'success')
     return redirect(url_for('index'))
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     app.run(debug=True)
